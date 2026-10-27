@@ -1,7 +1,15 @@
-# EWB Phishing URL Awareness Checker
+# 🛡️ EWB Phishing URL Awareness Checker
 
-## Overview
-Phishing is a cyber trick where attackers send fake links to steal your passwords, bank details, or OTPs. This project is a simple, beginner-friendly Python command-line tool that inspects the text of a URL for common warning signs. It works like a security guard checking a parcel label: it reads the text only and **never opens or visits the website**.
+> **Catch phishing traps before they catch you.**  
+> A lightweight, defensive URL inspector that spots phishing red flags in seconds—100% offline, reading text only, never touching the live web.
+
+---
+
+## 🌐 Live Test on Netlify
+Experience the interactive live web version deployed on Netlify:
+- **Instant URL Inspection:** Enter any URL or click the sample buttons from the workbook.
+- **Visual Red-Flag Badges:** See pass/fail status for all 6 detection rules in real time.
+- **In-Browser Terminal:** Run the exact same CLI experience directly from your browser.
 
 ## Features
 - **Checks for `@` symbol:** Attackers can use `@` to disguise where the link really leads.

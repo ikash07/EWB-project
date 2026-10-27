@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phishing URL Awareness Checker | Live Web App</title>
+  <meta name="description" content="A defensive cybersecurity tool that inspects URL text for phishing warning signs without ever visiting the link.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="background-glow"></div>
+  <div class="cyber-grid"></div>
+
+  <header class="navbar">
+    <div class="container nav-content">
+      <div class="brand">
+        <span class="shield-icon">🛡️</span>
+        <div>
+          <span class="brand-title">EWB URL Guard</span>
+          <span class="brand-tag">Cybersecurity Mini Project</span>
+        </div>
+      </div>
+      <div class="nav-links">
+        <a href="https://github.com/ikash07/EWB-project" target="_blank" class="nav-btn github-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          GitHub Repository
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container main-layout">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="badge-pill">
+        <span class="pulse-dot"></span> Defensive Security • Text-Only URL Analysis
+      </div>
+      <h1 class="hero-title">Phishing URL Awareness Checker</h1>
+      <p class="hero-subtitle">
+        Like a security guard inspecting a parcel label: checks visible URL text for 6 red flags without ever opening the link.
+      </p>
+    </section>
+
+    <!-- Interactive URL Checker Card -->
+    <section class="scanner-card">
+      <div class="card-header">
+        <div class="input-label-row">
+          <label for="urlInput" class="input-label">Enter a sample URL to inspect:</label>
+          <span class="security-note">🔒 Safe text analysis — never visits or opens websites</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <div class="input-wrapper">
+          <span class="input-icon">🔗</span>
+          <input 
+            type="text" 
+            id="urlInput" 
+            placeholder="e.g. http://192.0.2.10/account or https://www.example.com/login" 
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <button id="clearBtn" class="clear-btn" title="Clear input" style="display:none;">&times;</button>
+        </div>
+        <button id="inspectBtn" class="btn primary-btn">Inspect URL</button>
+      </div>
+
+      <!-- Quick Test Presets from Workbook -->
+      <div class="presets-container">
+        <span class="preset-label">Test Samples from Workbook:</span>
+        <div class="preset-buttons">
+          <button class="preset-btn" data-url="https://www.example.com/login">
+            Sample 1: Legitimate Domain
+          </button>
+          <button class="preset-btn" data-url="http://192.0.2.10/account">
+            Sample 2: IP Address + HTTP
+          </button>
+          <button class="preset-btn" data-url="http://example.com@sample.invalid/login">
+            Sample 3: @ Symbol Sign
+          </button>
+          <button class="preset-btn" data-url="https://a.b.c.d.e.example.invalid/path">
+            Sample 4: Multi-Subdomains
+          </button>
+          <button class="preset-btn" data-url="https://xn--example.invalid/">
+            Sample 5: Punycode (IDN)
+          </button>
+          <button class="preset-btn" data-url="http://[bad">
+            Bonus: Malformed Input
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Inspection Output Section -->
+    <section id="resultSection" class="result-section" style="display: none;">
+      <!-- Overall Status Banner -->
+      <div id="statusBanner" class="status-banner">
+        <div class="banner-icon-col">
+          <span id="bannerIcon" class="banner-icon">🛡️</span>
+        </div>
+        <div class="banner-text-col">
+          <h2 id="bannerTitle" class="banner-title">Analysis Complete</h2>
+          <p id="bannerMessage" class="banner-message"></p>
+        </div>
+        <div class="banner-badge-col">
+          <span id="warningBadge" class="warning-badge">0 Warnings</span>
+        </div>
+      </div>
+
+      <!-- URL Anatomy Breakdown -->
+      <div class="card anatomy-card">
+        <h3 class="card-subtitle">URL Anatomy Breakdown</h3>
+        <div class="anatomy-grid">
+          <div class="anatomy-item">
+            <span class="anatomy-tag">Scheme</span>
+            <span id="partScheme" class="anatomy-val">-</span>
+          </div>
+          <div class="anatomy-item">
+            <span class="anatomy-tag">Hostname</span>
+            <span id="partHost" class="anatomy-val">-</span>
+          </div>
+          <div class="anatomy-item">
+            <span class="anatomy-tag">Subdomains</span>
+            <span id="partSubdomains" class="anatomy-val">-</span>
+          </div>
+          <div class="anatomy-item">
+            <span class="anatomy-tag">Path</span>
+            <span id="partPath" class="anatomy-val">-</span>
+          </div>
+          <div class="anatomy-item">
+            <span class="anatomy-tag">Length</span>
+            <span id="partLength" class="anatomy-val">0 chars</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed 6-Check Grid -->
+      <div class="checks-grid">
+        <!-- Check 1 -->
+        <div id="check-at" class="check-card">
+          <div class="check-top">
+            <span class="check-title">1. @ Symbol Check</span>
+            <span class="check-status status-pass">Pass</span>
+          </div>
+          <p class="check-desc">Checks if the link contains an '@' symbol which ignores preceding text in browsers.</p>
+        </div>
+
+        <!-- Check 2 -->
+        <div id="check-length" class="check-card">
+          <div class="check-top">
+            <span class="check-title">2. Length Threshold</span>
+            <span class="check-status status-pass">Pass</span>
+          </div>
+          <p class="check-desc">Flags links exceeding 100 characters designed to conceal the real destination.</p>
+        </div>
+
+        <!-- Check 3 -->
+        <div id="check-ip" class="check-card">
+          <div class="check-top">
+            <span class="check-title">3. IP Hostname Check</span>
+            <span class="check-status status-pass">Pass</span>
+          </div>
+          <p class="check-desc">Detects bare IP addresses (e.g., 192.0.2.10) instead of registered domain names.</p>
+        </div>
+
+        <!-- Check 4 -->
+        <div id="check-subdomains" class="check-card">
+          <div class="check-top">
+            <span class="check-title">4. Subdomain Count</span>
+            <span class="check-status status-pass">Pass</span>
+          </div>
+          <p class="check-desc">Flags 5 or more host segments stacked to artificially simulate legitimate authority.</p>
+        </div>
+
+        <!-- Check 5 -->
+        <div id="check-punycode" class="check-card">
+          <div class="check-top">
+            <span class="check-title">5. Punycode (IDN) Check</span>
+            <span class="check-status status-pass">Pass</span>
+          </div>
+          <p class="check-desc">Detects 'xn--' prefixes used in homograph attacks to mimic familiar characters.</p>
+        </div>
+
+        <!-- Check 6 -->
+        <div id="check-http" class="check-card">
+          <div class="check-top">
+            <span class="check-title">6. HTTP Protocol Check</span>
+            <span class="check-status status-pass">Pass</span>
+          </div>
+          <p class="check-desc">Checks for unencrypted HTTP connections that lack transit encryption.</p>
+        </div>
+      </div>
+
+      <!-- Findings List (Exact Python output matches) -->
+      <div class="card findings-card">
+        <h3 class="card-subtitle">Detailed Findings (CLI Format)</h3>
+        <ul id="findingsList" class="findings-list"></ul>
+        <div class="security-reminder">
+          ⚠️ <strong>Security Rule:</strong> Never enter passwords from unexpected links.
+        </div>
+      </div>
+    </section>
+
+    <!-- Virtual Terminal Simulator -->
+    <section class="card terminal-section">
+      <div class="terminal-bar">
+        <div class="terminal-dots">
+          <span class="dot dot-red"></span>
+          <span class="dot dot-yellow"></span>
+          <span class="dot dot-green"></span>
+        </div>
+        <span class="terminal-title">PowerShell &mdash; python phishing_checker.py</span>
+      </div>
+      <div id="terminalBody" class="terminal-body">
+        <div class="term-line term-muted">Windows PowerShell [Version 10.0.22631]</div>
+        <div class="term-line term-muted">Copyright (C) Microsoft Corporation. All rights reserved.</div>
+        <div class="term-line">&nbsp;</div>
+        <div class="term-line term-prompt">PS E:\EWB project&gt; <span class="term-command">python phishing_checker.py</span></div>
+        <div class="term-line term-cyan">EWB Phishing URL Awareness Checker</div>
+        <div class="term-line term-muted">Text checks only - this program does not open URLs.</div>
+        <div class="term-line">&nbsp;</div>
+        <div id="termOutput"></div>
+        <div class="term-line term-prompt">
+          <span>Enter a sample URL (or type q to quit):&nbsp;</span>
+          <span id="termActiveInput" class="term-active-input"></span><span class="term-cursor">_</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Educational Notes & Limitations -->
+    <section class="info-grid">
+      <div class="card info-box">
+        <h4>💡 The Core Security Lesson</h4>
+        <p>These heuristics are warning signs, not definitive proof. A link with <strong>zero flags</strong> can still be malicious (e.g. typosquatting), and a link with flags may be legitimate internal tooling. Never assume safety based solely on text heuristics.</p>
+      </div>
+      <div class="card info-box">
+        <h4>⚖️ Ethical & Defensive Policy</h4>
+        <p>This tool is designed for educational cybersecurity awareness only. It performs client-side string inspection. It does not probe remote servers, extract credentials, or initiate network connections.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div>
+        <strong>Phishing URL Awareness Checker</strong> &bull; EWB Courses Mini Project
+      </div>
+      <div>
+        Developed by <strong>Bikash Sarkar</strong> &bull; <a href="https://github.com/ikash07" target="_blank">@ikash07</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
