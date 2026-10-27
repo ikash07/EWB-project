@@ -84,4 +84,16 @@ This is strictly an educational awareness tool. It only inspects visible URL tex
 Use sample strings and documentation addresses only. Do not harvest credentials, create deceptive links, or attempt unauthorized testing against external web services. This project is intended solely for defensive cybersecurity training and educational awareness.
 
 ## Author
-Student Developer, Cybersecurity Mini Project, EWB Courses
+**Bikash Sarkar**  
+GitHub: [@ikash07](https://github.com/ikash07)  
+Repository: [phishing-url-awareness](https://github.com/ikash07/EWB-project)  
+Course: Cybersecurity Mini Project, EWB Courses
+
+## Final Submission Checklist
+- [x] `phishing_checker.py`: Python source code with all 6 detection rules and 3 improvements
+- [x] `README.md`: Complete documentation, explanations, and instructions
+- [x] `requirements.txt`: Clean dependencies declaration (Python built-in libraries only)
+- [x] `tests/test_samples.md`: Testing evidence table with honest test results and analysis
+- [x] `screenshots/sample_run.png`: Terminal screenshot of sample run
+- [x] `screenshots/test_results.png`: Terminal screenshot of all 5 test cases
+- [x] GitHub repository URL: Ready for submission
