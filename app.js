@@ -15,6 +15,10 @@ const INFO_PREFIXES = [
 // DOM Elements
 const urlInput = document.getElementById("urlInput");
 const inspectBtn = document.getElementById("inspectBtn");
+const btnText = document.getElementById("btnText");
+const btnIcon = document.getElementById("btnIcon");
+const btnSpinner = document.getElementById("btnSpinner");
+const laserBeam = document.getElementById("laserBeam");
 const clearBtn = document.getElementById("clearBtn");
 const presetButtons = document.querySelectorAll(".preset-btn");
 
@@ -164,6 +168,13 @@ function inspectUrl(rawUrl) {
 function displayResults(rawUrl, analysis) {
   resultSection.style.display = "flex";
 
+  // Re-trigger card pop-in animation
+  [checkAt, checkLength, checkIp, checkSubdomains, checkPunycode, checkHttp].forEach(card => {
+    card.classList.remove("pop-in");
+    void card.offsetWidth; // Force reflow
+    card.classList.add("pop-in");
+  });
+
   // Reset check cards
   const updateCard = (cardEl, isFlagged) => {
     const statusEl = cardEl.querySelector(".check-status");
@@ -283,14 +294,41 @@ function escapeHtml(str) {
     .replace(/'/g, "&#039;");
 }
 
-function runAnalysis() {
+let isAnalyzing = false;
+
+function runAnalysis(onComplete) {
+  if (isAnalyzing) return;
+  isAnalyzing = true;
+
   const rawUrl = urlInput.value;
-  const analysis = inspectUrl(rawUrl);
-  displayResults(rawUrl, analysis);
+
+  // Trigger button scanning state
+  inspectBtn.classList.add("scanning");
+  if (btnText) btnText.textContent = "Scanning...";
+
+  // Trigger laser beam sweep
+  if (laserBeam) {
+    laserBeam.classList.remove("scanning");
+    void laserBeam.offsetWidth; // Force reflow
+    laserBeam.classList.add("scanning");
+  }
+
+  // Micro-animation scanning delay
+  setTimeout(() => {
+    const analysis = inspectUrl(rawUrl);
+    displayResults(rawUrl, analysis);
+
+    // Reset button
+    inspectBtn.classList.remove("scanning");
+    if (btnText) btnText.textContent = "Inspect URL";
+    isAnalyzing = false;
+
+    if (onComplete) onComplete();
+  }, 350);
 }
 
 // Event Listeners
-inspectBtn.addEventListener("click", runAnalysis);
+inspectBtn.addEventListener("click", () => runAnalysis());
 
 urlInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
@@ -317,15 +355,27 @@ presetButtons.forEach(btn => {
     urlInput.value = url;
     clearBtn.style.display = "block";
     termActiveInput.textContent = url;
-    runAnalysis();
-    resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    runAnalysis(() => {
+      resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   });
 });
 
-// Auto-run initial clean sample on page load
+// Auto-run initial sample on page load
 window.addEventListener("DOMContentLoaded", () => {
   urlInput.value = "http://192.0.2.10/account";
   clearBtn.style.display = "block";
   termActiveInput.textContent = urlInput.value;
   runAnalysis();
 });
+
+// Continuously remove any Netlify drawer/badge injection
+const removeNetlifyBadge = () => {
+  const elements = document.querySelectorAll(
+    'iframe[src*="netlify"], [data-netlify-drawer], #netlify-drawer, div[class*="feedback"], a[href*="netlify.com"][style*="fixed"], a[href*="netlify.com"][class*="badge"], div:has(> a[href*="netlify.com"])'
+  );
+  elements.forEach(el => el.remove());
+};
+
+window.addEventListener("DOMContentLoaded", removeNetlifyBadge);
+setInterval(removeNetlifyBadge, 400);

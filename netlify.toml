@@ -1,6 +1,12 @@
 [build]
   publish = "."
 
+[build.processing]
+  skip_processing = true
+
+[build.environment]
+  NETLIFY_FEEDBACK_DISABLED = "true"
+
 [[headers]]
   for = "/*"
   [headers.values]

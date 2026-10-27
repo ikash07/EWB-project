@@ -190,13 +190,21 @@ body {
 }
 
 .hero-title {
-  font-size: 2.5rem;
+  font-size: 2.85rem;
   font-weight: 800;
-  letter-spacing: -0.03em;
-  background: linear-gradient(135deg, #ffffff 40%, var(--cyan) 100%);
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  margin-bottom: 12px;
+  line-height: 1.15;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #00f0ff 0%, #0091ff 50%, #9945ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 12px;
+  display: inline-block;
+  filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.45));
 }
 
 .hero-subtitle {
@@ -217,12 +225,39 @@ body {
 }
 
 .scanner-card {
+  position: relative;
+  overflow: hidden;
   background: var(--bg-card);
   backdrop-filter: blur(16px);
   border: 1px solid var(--border-color);
   border-radius: 18px;
   padding: 28px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  transition: border-color 0.3s ease;
+}
+
+.laser-beam {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--cyan), #ffffff, var(--cyan), transparent);
+  box-shadow: 0 0 15px var(--cyan), 0 0 30px var(--cyan);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.laser-beam.scanning {
+  animation: laserScan 0.65s ease-in-out;
+}
+
+@keyframes laserScan {
+  0% { left: -100%; opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
 }
 
 .scanner-card:focus-within {
@@ -322,14 +357,53 @@ body {
 }
 
 .primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   background: linear-gradient(135deg, #00e5ff 0%, #0099ff 100%);
   color: #001224;
   box-shadow: 0 4px 16px rgba(0, 229, 255, 0.3);
+  position: relative;
+  overflow: hidden;
 }
 
 .primary-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 22px rgba(0, 229, 255, 0.45);
+}
+
+.primary-btn:active {
+  transform: translateY(0);
+}
+
+.primary-btn.scanning {
+  pointer-events: none;
+  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+  box-shadow: 0 0 24px rgba(0, 229, 255, 0.6);
+  color: #fff;
+}
+
+.btn-spinner {
+  display: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.primary-btn.scanning .btn-spinner {
+  display: inline-block;
+}
+
+.primary-btn.scanning .btn-icon {
+  display: none;
 }
 
 /* Preset Buttons */
@@ -504,8 +578,24 @@ body {
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 16px 18px;
-  transition: all 0.25s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+.check-card.pop-in {
+  animation: cardPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes cardPopIn {
+  0% { transform: scale(0.92); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.checks-grid .check-card:nth-child(1) { animation-delay: 0.04s; }
+.checks-grid .check-card:nth-child(2) { animation-delay: 0.08s; }
+.checks-grid .check-card:nth-child(3) { animation-delay: 0.12s; }
+.checks-grid .check-card:nth-child(4) { animation-delay: 0.16s; }
+.checks-grid .check-card:nth-child(5) { animation-delay: 0.20s; }
+.checks-grid .check-card:nth-child(6) { animation-delay: 0.24s; }
 
 .check-top {
   display: flex;
@@ -526,6 +616,7 @@ body {
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
+  transition: all 0.25s ease;
 }
 
 .status-pass {
@@ -538,6 +629,13 @@ body {
   background: var(--crimson-bg);
   color: var(--crimson);
   border: 1px solid var(--crimson-border);
+  box-shadow: 0 0 10px rgba(255, 61, 87, 0.3);
+  animation: pulseFlag 2s infinite ease-in-out;
+}
+
+@keyframes pulseFlag {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 61, 87, 0.35); }
+  50% { box-shadow: 0 0 12px 2px rgba(255, 61, 87, 0.5); }
 }
 
 .check-desc {
@@ -712,4 +810,28 @@ body {
   .checks-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Suppress Powered by Netlify badge / drawer */
+[data-netlify-drawer],
+#netlify-drawer,
+.netlify-badge,
+iframe#netlify-drawer,
+iframe[src*="netlify"],
+div[class*="netlify-feedback"],
+div[class*="feedback-drawer"],
+div[class*="feedback-btn"],
+div[class*="netlify-badge"],
+div:has(> a[href*="netlify.com"]),
+a[href*="netlify.com"][class*="badge"],
+a[href*="netlify.com"][style*="fixed"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
 }

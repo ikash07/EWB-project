@@ -40,14 +40,17 @@
       <div class="badge-pill">
         <span class="pulse-dot"></span> Defensive Security • Text-Only URL Analysis
       </div>
-      <h1 class="hero-title">Phishing URL Awareness Checker</h1>
+      <h1 class="hero-title">
+        Phishing URL <span class="gradient-text">Awareness Checker</span>
+      </h1>
       <p class="hero-subtitle">
         Like a security guard inspecting a parcel label: checks visible URL text for 6 red flags without ever opening the link.
       </p>
     </section>
 
     <!-- Interactive URL Checker Card -->
-    <section class="scanner-card">
+    <section class="scanner-card" id="scannerCard">
+      <div class="laser-beam" id="laserBeam"></div>
       <div class="card-header">
         <div class="input-label-row">
           <label for="urlInput" class="input-label">Enter a sample URL to inspect:</label>
@@ -67,7 +70,11 @@
           >
           <button id="clearBtn" class="clear-btn" title="Clear input" style="display:none;">&times;</button>
         </div>
-        <button id="inspectBtn" class="btn primary-btn">Inspect URL</button>
+        <button id="inspectBtn" class="btn primary-btn">
+          <span class="btn-spinner" id="btnSpinner"></span>
+          <span class="btn-icon" id="btnIcon">🔍</span>
+          <span id="btnText">Inspect URL</span>
+        </button>
       </div>
 
       <!-- Quick Test Presets from Workbook -->
