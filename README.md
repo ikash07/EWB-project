@@ -1,31 +1,30 @@
 # EWB Phishing URL Awareness Checker
 
 ## Overview
-Phishing is a social engineering cyberattack where fraudulent links or messages trick individuals into exposing sensitive data such as credentials, financial tokens, or personal identifiers. The **EWB Phishing URL Awareness Checker** is a lightweight, defensive security tool that inspects the raw text of a URL for observable warning indicators. Operating purely as an offline text analyzer, it flags suspicious URL characteristics without opening or communicating with the web address.
+Phishing is a cyber trick where attackers send fake links to steal your passwords, bank details, or OTPs. This project is a simple, beginner-friendly Python command-line tool that inspects the text of a URL for common warning signs. It works like a security guard checking a parcel label: it reads the text only and **never opens or visits the website**.
 
 ## Features
-- Detects an `@` symbol in the URL (browsers navigate to the domain after the `@`, ignoring text preceding it).
-- Flags unusually long URLs (over 100 characters) commonly used to push misleading paths or hide destinations.
-- Flags IP-address hostnames (bare numbers frequently indicate rogue servers bypassing domain reputation checks).
-- Flags excessive hostname segments (5 or more parts/subdomains used to simulate legitimate structures).
-- Flags punycode-style hostnames (`xn--`) which can disguise look-alike Internationalized Domain Name (IDN) homograph attacks.
-- Flags the unencrypted `HTTP` scheme where transmissions can be intercepted or manipulated in transit.
-- **Interactive Multi-URL Evaluation Loop** (Improvement A): Continuous command-line evaluation with a dedicated quit command (`q`).
-- **Quantified Warning Summary** (Improvement B): Highlights review severity when warning indicators are detected (`REVIEW CAREFULLY: X warning sign(s) found.`).
-- **Resilient Exception Handling** (Improvement C): Shields against malformed inputs (e.g., incomplete IPv6 brackets) to ensure zero crashes.
+- **Checks for `@` symbol:** Attackers can use `@` to disguise where the link really leads.
+- **Checks URL length:** Flags URLs longer than 100 characters, which can hide the real destination.
+- **Checks for IP addresses:** Flags numbers like `192.0.2.10` instead of a normal domain name.
+- **Counts domain parts:** Flags hostnames with 5 or more dots/subdomains that try to look official.
+- **Checks for punycode (`xn--`):** Flags special look-alike letters used to mimic real websites.
+- **Checks for plain HTTP:** Warns when the connection is not encrypted with HTTPS.
+- **Repeated checks loop (Improvement 1):** Lets you check multiple links in one go until you type `q` to quit.
+- **Warning summary count (Improvement 2):** Clearly counts how many red flags were found so you know to review carefully.
+- **Crash protection (Improvement 3):** Handles weird or broken inputs safely without crashing the program.
 
 ## Requirements
-Python 3.10 or later. No extra packages needed (uses Python standard library exclusively).
+- Python 3.10 or later
+- No extra packages to install (uses standard built-in Python tools)
 
 ## How to Run
-- **Windows:**
-  ```powershell
-  python phishing_checker.py
-  ```
-- **Mac/Linux:**
-  ```bash
-  python3 phishing_checker.py
-  ```
+
+1. Open your terminal or Command Prompt in this folder.
+2. Run the command:
+   - **Windows:** `python phishing_checker.py`
+   - **Mac / Linux:** `python3 phishing_checker.py`
+3. Enter any sample URL to check it, or type `q` to exit.
 
 ## Example Output
 ```text
@@ -47,53 +46,52 @@ Goodbye! Stay alert online.
 ```
 
 ## Testing
-| # | Input | Expected | Actual | Result |
-|---|-------|----------|--------|--------|
-| 1 | `https://www.example.com/login` | No warning signs | No listed warning signs found. This does NOT prove safety. | PASS |
-| 2 | `http://192.0.2.10/account` | Flags IP-address hostname and HTTP | Uses an IP address instead of a familiar domain. / Uses HTTP. HTTPS alone does not prove trust. | PASS |
-| 3 | `http://example.com@sample.invalid/login` | Flags @ symbol and HTTP | Contains an @ symbol; inspect carefully. / Uses HTTP. HTTPS alone does not prove trust. | PASS |
-| 4 | `https://a.b.c.d.e.example.invalid/path` | Flags many hostname segments | Contains many hostname segments/subdomains. | PASS |
-| 5 | `https://xn--example.invalid/` | Flags punycode-style hostname | Contains a punycode-style hostname. | PASS |
+Here are the five test cases from the workbook:
 
-> Complete test run notes and environment metadata are documented in [tests/test_samples.md](tests/test_samples.md).
+| # | Input | Expected | Actual | Result |
+|---|---|---|---|:---:|
+| 1 | `https://www.example.com/login` | No warning signs | No listed warning signs found. This does NOT prove safety. | **PASS** |
+| 2 | `http://192.0.2.10/account` | IP address + HTTP | Uses an IP address instead of a familiar domain. / Uses HTTP. HTTPS alone does not prove trust. | **PASS** |
+| 3 | `http://example.com@sample.invalid/login` | @ symbol + HTTP | Contains an @ symbol; inspect carefully. / Uses HTTP. HTTPS alone does not prove trust. | **PASS** |
+| 4 | `https://a.b.c.d.e.example.invalid/path` | Many hostname segments | Contains many hostname segments/subdomains. | **PASS** |
+| 5 | `https://xn--example.invalid/` | Punycode hostname | Contains a punycode-style hostname. | **PASS** |
+
+Full testing notes are recorded in [tests/test_samples.md](tests/test_samples.md).
 
 ## Screenshots
+
+### 1. Sample Program Run
 ![Sample run](screenshots/sample_run.png)
+
+### 2. Five Test Results
 ![Test results](screenshots/test_results.png)
 
 ## Improvements
-1. **Interactive CLI Loop with Exit Support (Option A)**:
-   - *What changed:* Replaced single-run execution with a `while True` evaluation loop that supports exit commands (`q`, `quit`, `exit`).
-   - *Why:* Enables users and security analysts to inspect multiple URLs sequentially without needing to restart the Python process every time.
-   - *How tested:* Ran a sequential test session with all test cases back-to-back, entered `q`, and verified that the program cleanly terminated with a safety reminder.
+1. **Loop with quit command (Option A):**
+   - *What changed:* Added a `while True` loop so you don't have to restart the script for every URL.
+   - *Why:* Makes testing fast and convenient.
+   - *How tested:* Tested several URLs one after another, then typed `q` to confirm it exits smoothly.
 
-2. **Distinct Warning Summary Banner (Option B)**:
-   - *What changed:* Introduced a `has_warnings()` helper filter that detects actual security flags versus benign informational status messages, outputting a bold `REVIEW CAREFULLY: X warning sign(s) found.` count.
-   - *Why:* Provides instant cognitive clarity and quantifies risk exposure for the user.
-   - *How tested:* Validated that benign URLs (which yield informational status) do not trigger the alert, whereas flagged samples display accurate warning counts.
+2. **Review carefully summary (Option B):**
+   - *What changed:* Added a helper function to count real warnings and show a bold `REVIEW CAREFULLY` notice.
+   - *Why:* Quickly tells the user if any real warning signs were found.
+   - *How tested:* Checked that clean URLs show no alert, while suspicious links show the exact warning count.
 
-3. **Exception-Safe URL Parsing (Option C)**:
-   - *What changed:* Wrapped `urlparse(candidate)` in a `try...except ValueError` construct returning `"This text is not a valid URL format."`.
-   - *Why:* Prevents unhandled runtime crashes when processing malformed inputs such as incomplete IPv6 literals (`http://[bad`).
-   - *How tested:* Fed `http://[bad` into the checker; confirmed that the application caught the syntax failure safely and reported the formatted error without terminating unexpectedly.
+3. **Protection against bad URLs (Option C):**
+   - *What changed:* Added `try / except ValueError` around URL parsing.
+   - *Why:* Prevents the program from crashing if someone types invalid characters like `http://[bad`.
+   - *How tested:* Typed `http://[bad`; the program printed a friendly error message instead of crashing.
 
 ## Limitations
-This is strictly an educational awareness tool. It only inspects visible URL text strings using static heuristic checks. It does not visit websites, execute network queries, scan server binaries for malware, or consult threat intelligence reputation feeds. A result of **"No listed warning signs found" does NOT mean a URL is safe**, as sophisticated adversaries can craft clean-looking URLs on newly registered or compromised domains.
+This is an educational learning tool. It only reads the plain text of a URL. It **does not** open websites, scan for computer viruses, or guarantee that a link is safe. **"No listed warning signs found" does NOT mean the link is safe.** Always be cautious before clicking any unexpected links.
 
 ## Ethical Use
-Use sample strings and documentation addresses only. Do not harvest credentials, create deceptive links, or attempt unauthorized testing against external web services. This project is intended solely for defensive cybersecurity training and educational awareness.
+- Use only safe sample links.
+- Do not use this tool to attack, probe, or deceive anyone.
+- Never enter your real passwords into suspicious websites.
 
 ## Author
 **Bikash Sarkar**  
 GitHub: [@ikash07](https://github.com/ikash07)  
 Repository: [phishing-url-awareness](https://github.com/ikash07/EWB-project)  
 Course: Cybersecurity Mini Project, EWB Courses
-
-## Final Submission Checklist
-- [x] `phishing_checker.py`: Python source code with all 6 detection rules and 3 improvements
-- [x] `README.md`: Complete documentation, explanations, and instructions
-- [x] `requirements.txt`: Clean dependencies declaration (Python built-in libraries only)
-- [x] `tests/test_samples.md`: Testing evidence table with honest test results and analysis
-- [x] `screenshots/sample_run.png`: Terminal screenshot of sample run
-- [x] `screenshots/test_results.png`: Terminal screenshot of all 5 test cases
-- [x] GitHub repository URL: Ready for submission
